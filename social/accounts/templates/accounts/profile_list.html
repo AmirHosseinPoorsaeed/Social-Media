@@ -1,0 +1,16 @@
+{% extends '_base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block page_title %}
+    All Profile
+{% endblock page_title %}
+
+{% block content %}
+    {% for profile in profiles %}
+        <a href="{% url 'accounts:user_detail' profile.user %}">
+            <h4>{{ profile.user }}</h4>
+        </a>
+        <br>
+    {% endfor %}
+{% endblock content %}

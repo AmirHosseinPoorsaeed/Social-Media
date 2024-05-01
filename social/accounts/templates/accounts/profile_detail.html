@@ -1,0 +1,30 @@
+{% extends '_base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block page_title %}
+    Profile Detail
+{% endblock page_title %}
+
+{% block content %}
+    <h4>{{ profile.user }}</h4>
+    <p>following: {{ profile.count_following }}</p>
+    <p>follower: {{ profile.count_followers }}</p>
+    <p>{{ profile.is_online }}</p>
+    <img src="{{ profile.image.url }}" alt="">
+    <p>
+        {% if follow %}
+            <form action="{% url 'accounts:follow' %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="profile_pk" value="{{ profile.pk }}">
+                <input type="submit" value="UnFollow">
+            </form>
+        {% else %}
+            <form action="{% url 'accounts:follow' %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="profile_pk" value="{{ profile.pk }}">
+                <input type="submit" value="Follow">
+            </form>
+        {% endif %}
+    </p>
+{% endblock content %}

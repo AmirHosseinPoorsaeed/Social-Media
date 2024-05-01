@@ -1,0 +1,22 @@
+{% extends '_base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block page_title %}
+    Profile
+{% endblock page_title %}
+
+{% block content %}
+    <img src="{{ user.profile.image.url }}" alt="img">
+    <h4>{{ user.first_name }} {{ user.last_name }} {{ user.username }}</h4>
+    <p>followers---{{ user.profile.count_followers }}---</p>
+    <br>
+    <p>following---{{ user.profile.count_following }}---</p>
+    <br>
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ user_form|crispy }}
+        {{ profile_form|crispy }}
+        <input type="submit" class="btn btn-success" value="Save">
+    </form>
+{% endblock content %}
