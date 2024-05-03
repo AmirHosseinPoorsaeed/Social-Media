@@ -1,0 +1,12 @@
+{% extends '_base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block page_title %}
+    Post Delete Page
+{% endblock page_title %}
+
+{% block content %}
+    <h4>Are you sure you want to delete {{ post.title }}</h4>
+    <input type="submit" value="Delete">
+{% endblock content %}

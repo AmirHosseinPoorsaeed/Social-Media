@@ -1,0 +1,15 @@
+{% extends '_base.html' %}
+
+{% block page_title %}
+    User Post List Page
+{% endblock page_title %}
+
+{% block content %}
+    {% for post in posts %}
+        <img src="{{ post.image.url }}" alt="">
+        <a href="{{ post.get_absolute_url }}"><h4>{{ post.title|truncatewords:15 }}</h4></a>
+        <p>{{ post.description|safe }}</p>
+        <p>{{ post.author }}</p>
+        <br>
+    {% endfor %}
+{% endblock content %}

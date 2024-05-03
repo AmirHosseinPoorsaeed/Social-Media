@@ -1,0 +1,50 @@
+{% extends '_base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block page_title %}
+    Post Detail Page
+{% endblock page_title %}
+
+{% block content %}
+    <img src="{{ post.image.url }}" alt="">
+    <p>{{ post.description|safe }}</p>
+    <p>{{ post.author }}</p>
+    <p>{{ post.count_likes }}</p>
+    <p>{{ post_liked }}</p>
+    {% if post_liked %}
+        <form action="{% url 'blog:post_like' post.id %}" method="POST">
+            {% csrf_token %}
+            <input type="submit" value="DisLike">
+        </form>
+    {% else %}
+        <form action="{% url 'blog:post_like' post.id %}" method="POST">
+            {% csrf_token %}
+            <input type="submit" value="Like">
+        </form>
+    {% endif %}
+    <br><br>
+    {% for comment in comments %}
+        <p>{{ comment.body }}</p>
+        <p>{{ comment.author }}</p>
+        {% if user in comment.likes.all %}
+            <form action="{% url 'blog:comment_like' comment.id %}" method="POST">
+                {% csrf_token %}
+                <input type="submit" value="DisLike">
+            </form>
+        {% else %}
+            <form action="{% url 'blog:comment_like' comment.id %}" method="POST">
+                {% csrf_token %}
+                <input type="submit" value="Like">
+            </form>
+        {% endif %}
+        <p>{{ comment.count_likes }}</p>
+        <hr>
+    {% endfor %}
+    <br><br>
+    <form action="{% url 'blog:comment_create' post.slug %}" method="POST">
+        {% csrf_token %}
+        {{ comment_form|crispy }}
+        <input type="submit" value="Save">
+    </form>
+{% endblock content %}

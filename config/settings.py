@@ -43,10 +43,12 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     'allauth',
     'allauth.account',
+    'ckeditor',
 
     # local
     'social.accounts.apps.AccountsConfig',
     'social.pages.apps.PagesConfig',
+    'social.blog.apps.BlogConfig',
 ]
 
 MIDDLEWARE = [
@@ -131,7 +133,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = str(BASE_DIR.joinpath('social/staticfiles'))
+STATICFILES_DIRS = [str(BASE_DIR.joinpath('social/static'))]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = str(BASE_DIR.joinpath('social/media'))

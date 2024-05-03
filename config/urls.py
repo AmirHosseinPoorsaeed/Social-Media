@@ -24,6 +24,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('accounts/', include('social.accounts.urls', namespace='accounts')),
     path('', include('social.pages.urls', namespace='pages')),
+    path('blog/', include('social.blog.urls', namespace='blog')),
 ]
 
 if settings.DEBUG:
