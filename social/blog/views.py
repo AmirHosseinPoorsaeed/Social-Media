@@ -1,7 +1,10 @@
+from typing import Any
+from django.db.models.query import QuerySet
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth import get_user_model
+from django.contrib.postgres.search import SearchVector
 
 from social.blog.models import Post, Comment
 from social.blog.forms import CommentCreateForm, PostCreateForm
@@ -108,6 +111,46 @@ class CommentCreateView(generic.CreateView):
         obj.post = post
         
         return super().form_valid(form)
+    
+
+class SearchListView(generic.ListView):
+    template_name = 'blog/post_search_list.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self) -> QuerySet[Any]:
+        query = self.request.GET.get('q')
+        return Post.objects.active()\
+            .annotate(search=SearchVector('title', 'owner__username'))\
+            .filter(search=query)
+    
+
+class WishListView(generic.ListView):
+    template_name = 'blog/post_wish_list.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        user = self.request.user
+        return Post.objects.active().filter(favorites=user)
+    
+
+class UserPostLikeView(generic.ListView):
+    template_name = 'blog/post_user_like_list.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        user = self.request.user
+        return user.post_likes.active()
+    
+
+def post_favorite(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+
+    if request.user in post.favorites.all():
+        post.favorites.remove(request.user)
+    else:
+        post.favorites.add(request.user)
+
+    return redirect(post.get_absolute_url())
 
 
 def post_like(request, post_id):

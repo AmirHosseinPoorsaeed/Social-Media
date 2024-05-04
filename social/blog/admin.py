@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from social.blog.models import Comment, Post
+from social.blog.models import Comment, Post, PostFavorite
 
 
 class CommentInline(admin.TabularInline):
@@ -26,3 +26,8 @@ class PostAdmin(admin.ModelAdmin):
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('id', 'post', 'author', 'count_likes', 'datetime_created',)
+
+
+@admin.register(PostFavorite)
+class PostFavoriteAdmin(admin.ModelAdmin):
+    list_display = ('user', 'post', 'datetime_created',)

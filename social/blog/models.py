@@ -21,6 +21,12 @@ class Post(models.Model):
         related_name='post_likes',
         blank=True
     )
+    favorites = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        through='PostFavorite',
+        related_name='post_favorites',
+        blank=True
+    )
     image = models.ImageField(upload_to='post/')
     active = models.BooleanField(default=True)
     datetime_created = models.DateTimeField(auto_now_add=True)
@@ -47,6 +53,23 @@ class Post(models.Model):
     @property
     def count_likes(self):
         return self.likes.count()
+    
+
+class PostFavorite(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE
+    )
+    post = models.ForeignKey(
+        Post, 
+        on_delete=models.CASCADE
+    )
+    datetime_created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'post')
+        verbose_name = 'Post Favorite'
+        verbose_name_plural = 'Posts Favorites'
 
 
 class Comment(models.Model):

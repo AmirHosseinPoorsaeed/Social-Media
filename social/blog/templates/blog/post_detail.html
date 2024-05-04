@@ -8,6 +8,17 @@
 
 {% block content %}
     <img src="{{ post.image.url }}" alt="">
+    {% if user in post.favorites.all %}
+        <form action="{% url 'blog:post_save' post.pk %}" method="POST">
+            {% csrf_token %}
+            <input type="submit" value="UnBookmark">
+        </form>
+    {% else %}
+        <form action="{% url 'blog:post_save' post.pk %}" method="POST">
+            {% csrf_token %}
+            <input type="submit" value="Bookmark">
+        </form>
+    {% endif %}
     <p>{{ post.description|safe }}</p>
     <p>{{ post.author }}</p>
     <p>{{ post.count_likes }}</p>

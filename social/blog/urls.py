@@ -7,6 +7,18 @@ app_name = 'blog'
 
 urlpatterns = [
     path('', views.PostListView.as_view(), name='post_list'),
+    path('liked/', 
+        views.UserPostLikeView.as_view(), name='post_user_like_list'
+    ),
+    path('saved/', 
+        views.WishListView.as_view(), name='post_wish_list'
+    ),
+    path('save/<int:post_id>/', 
+        views.post_favorite, name='post_save'
+    ),
+    path('search/', 
+         views.SearchListView.as_view(), name='post_search_list'
+    ),
     path('create/', 
         views.PostCreateView.as_view(), name='post_create'
     ),

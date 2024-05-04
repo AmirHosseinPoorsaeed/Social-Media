@@ -1,0 +1,16 @@
+{% extends '_base.html' %}
+
+{% block page_title %}
+    Post Search List Page
+{% endblock page_title %}
+
+{% block content %}
+    {% for post in posts %}
+        <img src="{{ post.image.url }}" alt="">
+        <a href="{{ post.get_absolute_url }}"><h4>{{ post.title|truncatewords:15 }}</h4></a>
+        <p>{{ post.description|safe }}</p>
+        <p>{{ post.author }}</p>
+        <p>{{ post.count_likes }}</p>
+        <br>
+    {% endfor %}
+{% endblock content %}
