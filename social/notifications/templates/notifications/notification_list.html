@@ -1,0 +1,15 @@
+{% extends '_base.html' %}
+
+{% block page_title %}
+    Notification List Page
+{% endblock page_title %}
+
+{% block content %}
+    {% for notification in notifications %}
+        <p>{{ notification.sender }}</p>
+        <p>{{ notification.post }}</p>
+        <p>{{ notification.comment }}</p>
+        <p>{{ notification.get_notification_type_display }}</p>
+        <br>
+    {% endfor %}
+{% endblock content %}

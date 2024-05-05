@@ -38,6 +38,12 @@
     {% for comment in comments %}
         <p>{{ comment.body }}</p>
         <p>{{ comment.author }}</p>
+        <form action="{% url 'blog:comment_create' post.slug %}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" value="{{ comment.pk }}" name="comment_id">
+            {{ comment_form|crispy }}
+            <input type="submit" value="Save">
+        </form>
         {% if user in comment.likes.all %}
             <form action="{% url 'blog:comment_like' comment.id %}" method="POST">
                 {% csrf_token %}

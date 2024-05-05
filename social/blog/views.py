@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.postgres.search import SearchVector
 
 from social.blog.models import Post, Comment
+from social.notifications.models import Notification
 from social.blog.forms import CommentCreateForm, PostCreateForm
 from social.blog.mixins import PostOwnerMixin
 
@@ -106,9 +107,25 @@ class CommentCreateView(generic.CreateView):
         user = self.request.user
         post_slug = self.kwargs.get('slug')
         post = get_object_or_404(Post, slug=post_slug)
+        comment_id = self.request.POST.get('comment_id')
 
         obj.author = user
         obj.post = post
+
+        if comment_id:
+            comment = get_object_or_404(Comment, pk=comment_id)
+            obj.reply = comment
+
+        obj.save()
+        
+        notify = Notification(
+            sender=user,
+            post=post,
+            comment=obj, 
+            text=obj.body, 
+            type=3
+        )
+        notify.save()
         
         return super().form_valid(form)
     
@@ -144,32 +161,47 @@ class UserPostLikeView(generic.ListView):
 
 def post_favorite(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
+    user = request.user
 
-    if request.user in post.favorites.all():
-        post.favorites.remove(request.user)
+    if user in post.favorites.all():
+        post.favorites.remove(user)
+        notify = Notification.objects.filter(post=post, sender=user, type=5)
+        notify.delete()        
     else:
-        post.favorites.add(request.user)
+        post.favorites.add(user)
+        notify = Notification(post=post, sender=user, type=5)
+        notify.save()
 
     return redirect(post.get_absolute_url())
 
 
 def post_like(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
+    user = request.user
 
-    if request.user in post.likes.all():
-        post.likes.remove(request.user)
+    if user in post.likes.all():
+        post.likes.remove(user)
+        notify = Notification.objects.filter(post=post, sender=user, type=1)
+        notify.delete()
     else:
-        post.likes.add(request.user)
+        post.likes.add(user)
+        notify = Notification(post=post, sender=user, type=1)
+        notify.save()
 
     return redirect(post.get_absolute_url())
 
 
 def comment_like(request, comment_id):
     comment = get_object_or_404(Comment, pk=comment_id)
+    user = request.user
 
-    if request.user in comment.likes.all():
-        comment.likes.remove(request.user)
+    if user in comment.likes.all():
+        comment.likes.remove(user)
+        notify = Notification.objects.filter(comment=comment, sender=user, type=4)
+        notify.delete()
     else:
-        comment.likes.add(request.user)
+        comment.likes.add(user)
+        notify = Notification(comment=comment, sender=user, type=1)
+        notify.save()
 
     return redirect(comment.get_absolute_url())

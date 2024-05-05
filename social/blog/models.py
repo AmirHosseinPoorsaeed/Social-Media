@@ -88,6 +88,13 @@ class Comment(models.Model):
         related_name='comment_likes',
         blank=True
     )
+    reply = models.ForeignKey(
+        'self',
+        on_delete=models.CASCADE,
+        related_name='replies',
+        blank=True,
+        null=True
+    )
     datetime_created = models.DateTimeField(auto_now_add=True)
 
     class Meta:

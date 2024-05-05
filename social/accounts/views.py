@@ -6,6 +6,7 @@ from social.accounts.forms import \
     UserUpdateForm, \
     ProfileUpdateForm
 from social.accounts.models import Profile
+from social.notifications.models import Notification
 
 
 class ProfileView(LoginRequiredMixin, View):
@@ -70,11 +71,16 @@ def follow_view(request):
         my_profile = get_object_or_404(Profile, user=request.user)
         obj_pk = request.POST.get('profile_pk')
         obj = get_object_or_404(Profile, pk=obj_pk)
+        user = request.user
 
         if obj in my_profile.following.all():
             my_profile.following.remove(obj.user.profile)
+            notify = Notification.objects.filter(sender=user, notification_type=2)
+            notify.delete()
         else:
             my_profile.following.add(obj.user.profile)
+            notify = Notification(sender=user, user=obj.user, notification_type=2)
+            notify.save()
 
         return redirect(request.META.get('HTTP_REFERER'))
 

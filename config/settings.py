@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'social.accounts.apps.AccountsConfig',
     'social.pages.apps.PagesConfig',
     'social.blog.apps.BlogConfig',
+    'social.notifications.apps.NotificationsConfig',
 ]
 
 MIDDLEWARE = [
