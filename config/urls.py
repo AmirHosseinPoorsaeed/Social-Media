@@ -26,6 +26,7 @@ urlpatterns = [
     path('', include('social.pages.urls', namespace='pages')),
     path('blog/', include('social.blog.urls', namespace='blog')),
     path('notifications/', include('social.notifications.urls', namespace='notifications')),
+    path('chat/', include('social.chat.urls', namespace='chat')),
 ]
 
 if settings.DEBUG:

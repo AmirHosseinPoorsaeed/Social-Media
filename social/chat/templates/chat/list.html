@@ -1,0 +1,17 @@
+{% extends '_base.html' %}
+
+{% block title %}
+    Room List
+{% endblock title %}
+
+{% block content %}
+    {% for room in rooms %}
+        {% if room.friend == user %}
+            <p><a href="{% url 'chat:choice' room.author.id %}">{{ room.author.profile }}</a></p>
+            <p>{{ room.author.pk }}</p>
+        {% else %}
+            <p><a href="{% url 'chat:choice' room.friend.id %}">{{ room.friend.profile }}</a></p>
+            <p>{{ room.friend.pk }}</p>
+        {% endif %}
+    {% endfor %}
+{% endblock content %}

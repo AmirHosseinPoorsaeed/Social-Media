@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,12 +46,14 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'ckeditor',
+    'channels',
 
     # local
     'social.accounts.apps.AccountsConfig',
     'social.pages.apps.PagesConfig',
     'social.blog.apps.BlogConfig',
     'social.notifications.apps.NotificationsConfig',
+    'social.chat.apps.ChatConfig',
 ]
 
 MIDDLEWARE = [
@@ -85,6 +88,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
+
+ASGI_APPLICATION = 'config.routing.application'
 
 
 # Database
@@ -172,3 +177,21 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Crispy settings
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
+
+# Deployment
+# Channel layer
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         'CONFIG': {
+#             'hosts': [('127.0.0.1', 6379)],
+#         },
+#     },
+# }
+
+# Development
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+    }
+}

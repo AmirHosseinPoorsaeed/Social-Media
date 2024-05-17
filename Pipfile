@@ -10,6 +10,8 @@ pillow = "*"
 crispy-bootstrap5 = "*"
 django-allauth = "*"
 django-ckeditor = "*"
+channels = {extras = ["daphne"], version = "*"}
+channels-redis = "*"
 
 [dev-packages]
 

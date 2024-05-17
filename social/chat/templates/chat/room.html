@@ -1,0 +1,183 @@
+{% extends '_base.html' %}
+
+{% block title %}
+    Room
+{% endblock title %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="mb-sm-3 col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        {{ friend }} Room
+                    </div>
+                    <div class="card-body">
+                        <div id="messages-list" class="border px-2 py-2 mb-2" style="height: 200px; overflow-y: scroll">
+                            {% for chat in chats %}
+                            <div class="media">
+                                <div class="media-body">
+                                    {% if chat.author == user %}
+                                        <h6 class="my-0 text-success"><strong>You</strong></h6>
+                                    {% else %}
+                                        <h6 class="my-0"><strong>{{ chat.author }}</strong></h6>
+                                    {% endif %}
+                                        <p>{{ chat.text }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-inline">
+                            <div class="form-group mr-2 mb-2">
+                            <input type="text" class="form-control" id="msg-input" placeholder="Enter your Message Text">
+                            </div>
+                            <button id="msg-submit" type="submit" class="btn btn-primary mb-2">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- {{ room_id|json_script:"room-id" }} -->
+
+{% endblock content %}
+
+{% block scripts %}
+
+<script>
+
+    var room_id = {{ room_id_json }};
+    var msgdiv = $('#messages-list');
+
+    window.onload = function(e){
+        msgdiv.scrollTop(msgdiv.prop('scrollHeight'));
+    }
+
+    var socket = new WebSocket(
+        'ws://' + window.location.host +
+        '/ws/chat/' + room_id + '/'
+    );
+
+    socket.onmessage = function(e) {
+        var message = JSON.parse(e.data);
+        msgdiv.append(`
+            <div class="media">
+                <div class="media-body">
+                    <h6 class="my-0"><strong>USERNAME</strong></h6>
+                    <p>MESSAGE</p>
+                </div>
+            </div>
+        `.replace('USERNAME', message['sender']).replace('MESSAGE', message['text']));
+    };
+
+    socket.onclose = function(e) {
+        console.error('Socket closed unexpectedly.')
+    };
+
+    socket.onopen = function(e) {
+        console.log('Successfully connected to the WebSocket.');
+    };
+
+    document.querySelector('#msg-input').focus();
+    document.querySelector('#msg-input').onkeyup = function(e) {
+        if (e.keyCode == 13) {
+            document.querySelector('#msg-submit').click();
+        }
+    };
+
+    document.querySelector('#msg-submit').onclick = function(e) {
+        var messageInputDom = document.querySelector('#msg-input');
+        var message = messageInputDom.value;
+
+        msgdiv.append(`
+            <div class="media">
+                <div class="media-body">
+                    <h6 class="my-0 text-success"><strong>You</strong></h6>
+                    <p>MESSAGE</p>
+                </div>
+            </div>
+        `.replace('MESSAGE', message));
+
+        msgdiv.scrollTop(msgdiv.prop('scrollHeight'));
+
+        socket.send(JSON.stringify({'text': message}));
+
+        messageInputDom.value = '';
+    };
+
+
+
+
+
+
+//     var room_id = JSON.parse(document.getElementById('room-id').textContent);
+//     var msgdiv = $('#messages-list');
+
+//     window.onload = function(e){
+//         msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
+//     }
+
+//     var socket = new WebSocket(
+//         'ws://' + window.location.host +
+//         '/ws/chat/' + room_id + '/');
+        
+//     socket.onmessage = function(e) {
+//         var message = JSON.parse(e.data);
+
+//         switch (message['type']) {
+//             case 'msg':
+//                 msgdiv.append(`
+//                     <div class="media">
+//                         <div class="media-body">
+//                             <h6 class="my-0"><strong>USERNAME</strong></h6>
+//                             <p>MESSAGE</p>
+//                         </div>
+//                     </div>
+//                 `.replace('USERNAME', message['sender']).replace('MESSAGE', message['text']));
+//                 break;
+//             default:
+//                 break;
+//         }
+//         msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
+//     };
+
+//     socket.onclose = function(e) {
+//         console.error('Socket closed unexpectedly');
+//     };
+
+//     document.querySelector('#msg-input').focus();
+//     document.querySelector('#msg-input').onkeyup = function(e) {
+//         if (e.keyCode === 13) {
+//             document.querySelector('#msg-submit').click();
+//         }
+//     };
+
+//     document.querySelector('#msg-submit').onclick = function(e) {
+//         var messageInputDom = document.querySelector('#msg-input');
+//         var message = messageInputDom.value;
+
+//         msgdiv.append(`
+//             <div class="media">
+//                 <div class="media-body">
+//                     <h6 class="my-0 text-success"><strong>You</strong></h6>
+//                     <p>MESSAGE</p>
+//                 </div>
+//             </div>
+//         `.replace('MESSAGE', message));
+
+//         msgdiv.scrollTop(msgdiv.prop("scrollHeight"));
+
+//         socket.send(JSON.stringify({'text': message}));
+
+//         messageInputDom.value = '';
+//     };
+
+
+
+
+
+</script>
+
+{% endblock scripts %}
